@@ -1,5 +1,8 @@
 package com.example.uiloginscreen_jetpackcompose.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,11 +35,16 @@ import androidx.compose.ui.unit.sp
 import com.example.uiloginscreen_jetpackcompose.GradientBox
 import com.example.uiloginscreen_jetpackcompose.MyTextField
 import com.example.uiloginscreen_jetpackcompose.isSmallScreenHeight
+import com.example.uiloginscreen_jetpackcompose.rememberImeState
 
 
 @Preview(showBackground = false)
 @Composable
 fun LoginScreen() {
+
+    //Enable window soft Input from the manifest
+    val imeVisible by rememberImeState()
+
     GradientBox(
         modifier = Modifier
             .fillMaxSize()
@@ -45,17 +54,23 @@ fun LoginScreen() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(0.35f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Welcome to Land of Coding",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 25.sp),
-                    color = Color.White
-                )
+            val animatedUpperSectionRatio by animateFloatAsState(
+                targetValue = if (imeVisible) 0f else 0.35f,
+                label = " "
+            )
+            AnimatedVisibility(visible = !imeVisible, enter = fadeIn()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight(animatedUpperSectionRatio)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Welcome to Land of Coding",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontSize = 25.sp),
+                        color = Color.White
+                    )
+                }
             }
             Column(
                 modifier = Modifier
